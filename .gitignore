@@ -1,0 +1,39 @@
+# Build products
+build/
+DerivedData/
+
+# Xcode user data (schemes, breakpoints, UI state)
+**/xcuserdata/
+**/*.xcuserstate
+**/*.xcbkptlist
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Archives
+*.xcarchive
+
+# Other
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Debug / profiling
+*.gcno
+*.gcda
