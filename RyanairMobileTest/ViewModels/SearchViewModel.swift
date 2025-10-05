@@ -29,14 +29,14 @@ final class SearchViewModel: ObservableObject {
     }
     
     var searchResult: Itineraries?
-    let apiClient: APIClient
     
     var isSearchEnabled: Bool {
         flightSearchParams != nil
     }
     
     private var store: UserDefaultsRouteSelectionStore
-    
+    private let apiClient: APIClient
+
     init(
         apiClient: APIClient = APIClient.shared,
         store: UserDefaultsRouteSelectionStore = UserDefaultsRouteSelectionStore.shared
@@ -59,9 +59,9 @@ final class SearchViewModel: ObservableObject {
         }
         isSearching = true
         do {
-            var result = try await apiClient.fetchItineraries(params: params)
+            let result = try await apiClient.fetchItineraries(params: params)
 
-            self.searchResult = result
+            searchResult = result
 
             if (filteredResult?.trips.isEmpty ?? true) {
                 error = AlertMessage(text: "No flights found for the selected route and date.")

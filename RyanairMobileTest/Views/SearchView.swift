@@ -60,7 +60,6 @@ struct SearchView: View {
                 }
             }
         }
-       
         .task {
             if viewModel.airports.isEmpty {
                 await viewModel.fetchAirports()

@@ -12,15 +12,12 @@ import Combine
 final class OriginAirportViewModel: ObservableObject {
     
     @Published var stations: [Station]
-
-    // UI state
     @Published var query: String = ""
 
     init(stations: [Station]) {
         self.stations = stations
     }
 
-    /// Stations filtered by the current search query (case-insensitive)
     var filteredStations: [Station] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return stations }
@@ -33,7 +30,7 @@ final class OriginAirportViewModel: ObservableObject {
     }
 
     var groupedByCountry: [(country: String, stations: [Station])] {
-        groupStationsByCountry(filteredStations) // or whatever list that VM exposes
+        groupStationsByCountry(filteredStations)
     }
 
     var isEmptySearchResult: Bool {

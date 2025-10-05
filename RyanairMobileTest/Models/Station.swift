@@ -7,8 +7,6 @@
 
 import Foundation
 
-// Models
-
 struct StationResponse: Decodable {
     let stations: [Station]
 }
