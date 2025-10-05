@@ -31,7 +31,11 @@ final class SearchViewModel: ObservableObject {
     var searchResult: Itineraries?
     
     var isSearchEnabled: Bool {
-        flightSearchParams != nil
+        guard !isSearching,
+              originAirport?.code != nil,
+              destinationAirport?.code != nil,
+              adults > 0 else { return false }
+        return true
     }
     
     private var store: UserDefaultsRouteSelectionStore
@@ -53,34 +57,35 @@ final class SearchViewModel: ObservableObject {
         }
     }
     
-    func performSearch() async  {
+    func performSearch() async {
         guard let params = flightSearchParams else {
+            self.error = AlertMessage(text: "Please select origin, destination, and date before searching.")
             return
         }
+
         isSearching = true
+        defer { isSearching = false }
+
         do {
             let result = try await apiClient.fetchItineraries(params: params)
+            self.searchResult = result
 
-            searchResult = result
-
-            if (filteredResult?.trips.isEmpty ?? true) {
-                error = AlertMessage(text: "No flights found for the selected route and date.")
-                showResults = false
+            if let filtered = self.filteredResult, !filtered.trips.isEmpty {
+                self.showResults = true
             } else {
-                showResults = true
+                self.error = AlertMessage(text: "No flights found for the selected route and date.")
+                self.showResults = false
             }
-            isSearching = false
         } catch {
             self.error = AlertMessage(text: error.localizedDescription)
+            self.showResults = false
         }
     }
-}
-
-extension SearchViewModel {
+    
     var filteredResult: Itineraries? {
-        guard let r = searchResult else { return nil }
+        guard let result = searchResult else { return nil }
 
-        let filteredTrips: [Trip] = r.trips.compactMap { trip in
+        let filteredTrips: [Trip] = result.trips.compactMap { trip in
             let filteredDates: [TripDate] = trip.dates.compactMap { date in
                 let flights = date.flights.filter { ($0.faresLeft ?? 0) > 0 }
                 return flights.isEmpty ? nil : TripDate(dateOut: date.dateOut, flights: flights)
@@ -88,14 +93,12 @@ extension SearchViewModel {
             return filteredDates.isEmpty ? nil : Trip(origin: trip.origin, destination: trip.destination, dates: filteredDates)
         }
 
-        return Itineraries(currency: r.currency,
-                           serverTimeUTC: r.serverTimeUTC,
-                           currPrecision: r.currPrecision,
+        return Itineraries(currency: result.currency,
+                           serverTimeUTC: result.serverTimeUTC,
+                           currPrecision: result.currPrecision,
                            trips: filteredTrips)
     }
-}
-
-extension SearchViewModel {
+    
     var flightSearchParams: FlightSearchParams? {
         guard let origin = originAirport?.code,
               let destination = destinationAirport?.code

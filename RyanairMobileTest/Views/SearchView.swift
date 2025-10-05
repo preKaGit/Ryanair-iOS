@@ -173,7 +173,6 @@ struct SearchButton: View {
     }
     
     private func tap() {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         action()
     }
 }
