@@ -27,8 +27,7 @@ struct FareItem: Identifiable {
     let fare: Fare
 }
 
-
-public enum PriceFormatter {
+enum PriceFormatter {
     static func label(amount: Double, currency: String) -> String {
         let f = NumberFormatter()
         f.numberStyle = .currency
@@ -37,7 +36,7 @@ public enum PriceFormatter {
     }
 }
 
-public func splitDateAndTime(from iso: String) -> (date: String, time: String)? {
+func splitDateAndTime(from iso: String) -> (date: String, time: String)? {
     let isoFormatter = ISO8601DateFormatter()
     isoFormatter.formatOptions = [.withFullDate, .withTime,
                                   .withDashSeparatorInDate,
@@ -56,4 +55,15 @@ public func splitDateAndTime(from iso: String) -> (date: String, time: String)? 
     let timeStr = timeFormatter.string(from: dateObj)
 
     return (date: dateStr, time: timeStr)
+}
+
+extension DateFormatter {
+    static let flightDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.locale   = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter
+    }()
 }
