@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct SearchView: View {
-    @StateObject var viewModel = SearchViewModel()
+    @StateObject private var viewModel: SearchViewModel
     @State var OriginStationView: Bool = false
     @State var DestinationStationView: Bool = false
+    
+    init(apiClient: APIClientProtocol = APIClient()) {
+        _viewModel = StateObject(wrappedValue: SearchViewModel(apiClient: apiClient))
+    }
     
     var body: some View {
         NavigationStack {

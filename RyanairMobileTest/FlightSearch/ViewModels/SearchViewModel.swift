@@ -39,10 +39,10 @@ final class SearchViewModel: ObservableObject {
     }
     
     private var store: UserDefaultsRouteSelectionStore
-    private let apiClient: APIClient
+    private let apiClient: APIClientProtocol
 
     init(
-        apiClient: APIClient = APIClient.shared,
+        apiClient: APIClientProtocol,
         store: UserDefaultsRouteSelectionStore = UserDefaultsRouteSelectionStore.shared
     ) {
         self.apiClient = apiClient

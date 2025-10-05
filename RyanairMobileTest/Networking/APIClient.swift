@@ -7,21 +7,31 @@
 
 import SwiftUI
 
-final class APIClient {
-    static let shared = APIClient()
-    private init() {}
+protocol APIClientProtocol {
+    func fetchStations() async throws -> [Station]
+    func fetchItineraries(params: FlightSearchParams) async throws -> Itineraries
+}
 
-    private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        return URLSession(configuration: config)
-    }()
+final class APIClient: APIClientProtocol {
 
-    private let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        return decoder
-    }()
+    private let session: URLSession
+    private let decoder: JSONDecoder
+
+    init(
+        session: URLSession = {
+            let config = URLSessionConfiguration.default
+            config.timeoutIntervalForRequest = 30
+            config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+            return URLSession(configuration: config)
+        }(),
+        decoder: JSONDecoder = {
+            let decoder = JSONDecoder()
+            return decoder
+        }()
+    ) {
+        self.session = session
+        self.decoder = decoder
+    }
 
 
     func fetchStations() async throws -> [Station] {
